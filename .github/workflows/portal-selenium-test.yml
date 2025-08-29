@@ -118,6 +118,7 @@ jobs:
 
         - name: Build Portal modules
           run: |
+            export MAVEN_OPTS="-Xmx3000m"
             modules=(
               "AxonIvyPortal/portal-components"
               "AxonIvyPortal/portal"
@@ -130,7 +131,7 @@ jobs:
               "Showcase/portal-demo-app"
             )
             for module in "${modules[@]}"; do
-              mvn clean install -f $module/pom.xml -Divy.engine.directory=$ENGINE_DIR
+              mvn clean install -f $module/pom.xml -X -Divy.engine.directory=$ENGINE_DIR
             done
 
         - name: Deploy Portal Modules
