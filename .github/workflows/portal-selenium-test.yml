@@ -21,57 +21,6 @@ env:
   ENGINE_URL: https://developer.axonivy.com/permalink/nightly/axonivy-engine.zip
 
 jobs:
-  pull-request-merged:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Show PRs merged into this branch
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const branch = context.ref;
-            const { data: prs } = await github.rest.pulls.list({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              base: branch,
-              state: 'closed',
-              per_page: 50,
-              page: 1
-            });
-
-            const mergedPrs = prs
-              .filter(pr => pr.merged_at !== null)
-              .sort((a, b) => new Date(b.merged_at) - new Date(a.merged_at))
-              .slice(0, 10);
-
-            if (!prs || prs.length === 0) {
-              await core.summary
-                .addHeading(`🔗 No PRs merged into '${branch}'`)
-                .write();
-              return;
-            }
-
-            await core.summary
-              .addHeading(`🔗 PRs merged into '${branch}' (maximum: 10)`)
-              .addTable([
-                [
-                  { data: 'PR Number', header: true },
-                  { data: 'Title', header: true },
-                  { data: 'Author', header: true },
-                  { data: 'Merged At', header: true }
-                ],
-                ...mergedPrs.map(pr => [
-                  `[${pr.number}](${pr.html_url})`,
-                  pr.title.replace(/\|/g, '\\|'),
-                  `@${pr.user.login}`,
-                  new Date(pr.merged_at).toLocaleString('vi-VN', {
-                    timeZone: 'Asia/Ho_Chi_Minh',
-                    hour12: false
-                  })
-                ])
-              ])
-              .write();
-
-
   portal-selenium-test:
       runs-on: ubuntu-latest
       steps:
